@@ -20,7 +20,7 @@ class unpacker_driver #(max_pkt_size=160) extends uvm_driver#(unpacker_transacti
 
    virtual task drive();
       unpacker_transaction tx;
-      integer packet_counter = 0, state = 0, data_size = 0;
+      integer packet_counter = 0, state = 0, data_size = 0, remainning_bytes = 0, temp_data = 160'b0;
       `uvm_info(get_full_name(), "driver: start",UVM_LOW)
 
       vif.sig_reset_L = 1'b0;
@@ -30,24 +30,15 @@ class unpacker_driver #(max_pkt_size=160) extends uvm_driver#(unpacker_transacti
       vif.sig_vbc = 8'b0;
       vif.sig_data = 1279'b0;
       forever begin
-         if(data_size == 0)
+         if(remainning_bytes == 0)
          begin
             seq_item_port.get_next_item(tx);
             `uvm_info("unpacker_driver", tx.sprint(), UVM_LOW);
             data_size = tx.pkt.size;
-            vif.sig_val = 1'b0;
-         end
-         if(data_size > 160)
-         begin
-            state = 1;
-         end
-         if(data_size == 160)
-         begin
-            state = 2;
-         end
-         if(data_size < 160)
-         begin
-            state = 3;
+            if(data_size != 0)
+            begin
+               state = 1;
+            end
          end
 
          @(posedge vif.sig_clock)
@@ -55,44 +46,41 @@ class unpacker_driver #(max_pkt_size=160) extends uvm_driver#(unpacker_transacti
                case(state)
                   1: 
                   begin
-                     vif.sig_reset_L = 1'b1;
-                     vif.sig_sop = 1'b1;
-                     vif.sig_val = 1'b1;
-                     vif.sig_vbc = 8'd160;
-                     vif.data = tx.pkt.data[max_pkt_size*packet_counter*8 +: max_pkt_size*8];
-                     packet_counter++;
-                     data_size = data_size - max_pkt_size;
+                     remainning_bytes = data_size;
+                     state = 2;
                   end
                   2:
                   begin
                      vif.sig_reset_L = 1'b1;
-                     vif.sig_sop = 1'b1;
-                     vif.sig_val = 1'b1;
-                     vif.sig_vbc = 8'd160;
-                     vif.sig_eop = 1'b1;
-                     vif.data = tx.pkt.data[max_pkt_size*packet_counter*8 +: max_pkt_size*8];
-                     packet_counter = 0;
-                     data_size = 0;
-                     state = 0;
-                     seq_item_port.item_done();
-                  end
-                  3:
-                  begin
-                     vif.sig_reset_L = 1'b1;
-                     vif.sig_sop = 1'b1;
-                     vif.sig_val = 1'b1;
-                     vif.sig_vbc = data_size;
-                     vif.sig_eop = 1'b1;
-                     vif.data = tx.pkt.data[max_pkt_size*packet_counter*8 +: data_size*8];
-                     packet_counter = 0;
-                     data_size = 0;
-                     state = 0;
-                     seq_item_port.item_done();
+                     if(remainning_bytes == data_size)
+                     begin
+                        vif.sig_sop = 1'b1;
+                        vif.sig_val = 1'b1;
+                     end
+                     if(remainning_bytes >= 160)
+                     begin
+                        vif.sig_data = tx.pkt.data[max_pkt_size*packet_counter*8 +: max_pkt_size*8];
+                        vif.sig_vbc = 8'd160;
+                        remainning_bytes = remainning_bytes - 160;
+                        packet_counter++; 
+                     end
+                     if(remainning_bytes < 160)
+                     begin
+                        temp_data = tx.pkt.data >> (max_pkt_size-remainning_bytes)*8;
+                        vif.sig_data = temp_data;
+                        vif.sig_vbc = remainning_bytes;
+                        remainning_bytes = 0;
+                        packet_counter = 0;
+                     end
+                     if(remainning_bytes == 0)
+                     begin
+                        vif.sig_eop = 1;
+                        vif.sig_val = 1'b0;
+                        seq_item_port.item_done();   
+                     end
                   end
                endcase
-              seq_item_port.get_next_item(tx);
               // `uvm_info("driver tx", tx.sprint(), UVM_LOW);
-              seq_item_port.item_done();
            end
       end
    endtask: drive
