@@ -69,15 +69,17 @@ class unpacker_driver #(max_pkt_size=160) extends uvm_driver#(unpacker_transacti
                         temp_data = tx.pkt.data >> (max_pkt_size-remainning_bytes)*8;
                         vif.sig_data = temp_data;
                         vif.sig_vbc = remainning_bytes;
-                        remainning_bytes = 0;
-                        packet_counter = 0;
+                        state = 3;
                      end
-                     if(remainning_bytes == 0)
-                     begin
-                        vif.sig_eop = 1;
-                        vif.sig_val = 1'b0;
-                        seq_item_port.item_done();   
-                     end
+                  end
+                  3:
+                  begin
+                     vif.sig_eop = 1;
+                     vif.sig_val = 1'b0;
+                     vif.sig_vbc = 0;
+                     packet_counter = 0;
+                     remainning_bytes = 0;
+                     seq_item_port.item_done();   
                   end
                endcase
               // `uvm_info("driver tx", tx.sprint(), UVM_LOW);
