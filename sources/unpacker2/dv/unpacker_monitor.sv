@@ -24,9 +24,15 @@ class unpacker_monitor_in extends uvm_monitor;
       unpacker_transaction tx;
       tx = unpacker_transaction::type_id::create
               (.name("tx"), .contxt(get_full_name()));
-      tx.pkt.data = 0;
 
       `uvm_info(get_full_name(), "monitor_in: start", UVM_LOW)
+
+      ////TEST ////////////////////////////////////////////////////////////////////////////////////////
+      tx.pkt.size = 10;
+      tx.pkt.data = 1280'hCDEFCDEFCDEFCDEF;
+      mon_ap.write(tx);
+      /////////////////////////////////////////////////////////////////////////////////////////////////
+
 
       forever begin
          @(posedge vif.sig_clock)
@@ -46,7 +52,7 @@ class unpacker_monitor_in extends uvm_monitor;
                      if (vif.sig_eop==1'b1)
                      begin
                         /// write transaction ////
-                        mon_ap.write(tx);
+                        ///mon_ap.write(tx);
                      end
                   end
                end
