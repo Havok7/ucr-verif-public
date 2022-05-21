@@ -18,42 +18,45 @@ class unpacker_monitor_in extends uvm_monitor;
    endfunction: build_phase
 
    task run_phase(uvm_phase phase);
-      integer unpacker_mon = 0, pkg_size = 0, a = 0, b = 0, size = 0;
+      integer shift = 0, data_temp = 0, unpacker_mon = 0, pkg_size = 0, a = 0, b = 0, size = 0;
 
       unpacker_transaction tx;
       tx = unpacker_transaction::type_id::create
               (.name("tx"), .contxt(get_full_name()));
       tx.pkt.data = 1280'hCAFEBEBEDEADBEEF4242;
       tx.pkt.size = 10;
-      mon_ap.write(tx);
+      //mon_ap.write(tx);
+      //mon_ap.write(tx);
 
       // `uvm_info(get_full_name(), "monitor_in: start", UVM_LOW)
 
-      // unpacker_transaction tx;
-      // forever begin
-      //    @(posedge vif.sig_clock)
-      //       begin
-      //          if(vif.sig_val==1'b1)
-      //          begin
-      //             if(vif.sig_ready==1'b1)
-      //             begin
-      //                tx.pkt.size = tx.pkt.size + vif.sig_vbc;
-      //                tx.pkt.data = tx.pkt.data << vif.sig_vbc;
-      //                tx.pkt.data = tx.pkt.data + vif.sig_data;
-      //                if (vif.sig_sop==1'b1)
-      //                begin
-      //                   tx.pkt.size = vif.sig_vbc;
-      //                   tx.pkt.data = vif.sig_data;
-      //                   end
-      //                if (vif.sig_eop==1'b1)
-      //                begin
-      //                   /// write transaction ////
-      //                   mon_ap.write(tx);
-      //                end
-      //             end
-      //          end
-      //       end
-      // end
+      forever begin
+         @(posedge vif.sig_clock)
+         begin
+            if(vif.sig_val==1)
+            begin
+               if(vif.sig_ready==1)
+               begin
+                  tx.pkt.size = tx.pkt.size + vif.sig_vbc;
+                  shift = shift + 160*8;
+                  data_temp = vif.sig_data;
+                  tx.pkt.data = tx.pkt.data + (vif.sig_data << shift);
+                  if (vif.sig_sop==1)
+                  begin
+                     shift = 0;
+                     tx.pkt.size = vif.sig_vbc;
+                     tx.pkt.data = vif.sig_data;
+                  end
+                  if (vif.sig_eop==1)
+                  begin
+                     /// write transaction ////
+                     mon_ap.write(tx);
+                  end
+               end
+            end
+         end
+      end
+      
    endtask: run_phase
 endclass: unpacker_monitor_in
 
@@ -84,8 +87,17 @@ class unpacker_monitor_out extends uvm_monitor;
       unpacker_transaction tx;
       tx = unpacker_transaction::type_id::create
               (.name("tx"), .contxt(get_full_name()));
-      tx.pkt.data = 1280'hCAFEBEBEDEADBEEF5252;
+      tx.pkt.data = 1280'hCAFEBEBEDEADBEEF4242;
       tx.pkt.size = 10;
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
+      mon_ap.write(tx);
       mon_ap.write(tx);
 
       // `uvm_info(get_full_name(), "monitor_out: start", UVM_LOW)
