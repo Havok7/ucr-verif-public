@@ -26,7 +26,16 @@ class unpacker_monitor_in extends uvm_monitor;
       tx.pkt.data = 1280'hCAFEBEBEDEADBEEF4242;
       tx.pkt.size = 10;
       //mon_ap.write(tx);
-      //mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
+      // mon_ap.write(tx);
 
       // `uvm_info(get_full_name(), "monitor_in: start", UVM_LOW)
 
@@ -39,7 +48,6 @@ class unpacker_monitor_in extends uvm_monitor;
                begin
                   tx.pkt.size = tx.pkt.size + vif.sig_vbc;
                   shift = shift + 160*8;
-                  data_temp = vif.sig_data;
                   tx.pkt.data = tx.pkt.data + (vif.sig_data << shift);
                   if (vif.sig_sop==1)
                   begin
@@ -105,17 +113,17 @@ class unpacker_monitor_out extends uvm_monitor;
       // forever begin
       //    @(posedge vif.sig_clock)
       //    begin
-      //       if(vif.sig_val==1'b0)
+      //       if(vif.sig_val==0)
       //       begin
       //          state = OVAL_0;
       //          tx.pkt.size = 0;
       //          tx.pkt.data = 0;
       //       end else begin
-      //          if(vif.sig_sop==1'b1)
+      //          if(vif.sig_sop==1)
       //          begin
       //             state = OSOP_1;
       //          end else begin
-      //             if(vif.sig_eop==1'b1)
+      //             if(vif.sig_eop==1)
       //             begin
       //                state = OEOP_1;
       //             end else begin
@@ -123,29 +131,39 @@ class unpacker_monitor_out extends uvm_monitor;
       //             end
       //          end
       //       end
-
+            
+      //       mon_ap.write(tx);
+            
       //       // state = 2 -> val = 1, sop = 1, eop = 0
       //       if(state == OSOP_1)
       //       begin
       //          tx.pkt.size = vif.sig_o_vbc;
       //          size = vif.sig_o_vbc;
       //          tx.pkt.data = vif.sig_o_data;
+      //          ///shift = 0
       //       end
 
       //       // state = 3 -> val = 1, sop = 0, eop = 0
       //       if(state == OSOP_OEOP_0)
       //       begin
       //          tx.pkt.size = tx.pkt.size + vif.sig_o_vbc;
-      //          tx.pkt.data = tx.pkt.data << vif.sig_o_vbc;
-      //          tx.pkt.data = tx.pkt.data + vif.sig_o_data;
+
+      //          ///shift = shift + 160*8;
+      //          ///data_temp = vif.sig_data;
+      //          ///tx.pkt.data = tx.pkt.data + (vif.sig_data << shift);
+
+      //          //tx.pkt.data = tx.pkt.data << vif.sig_o_vbc;
+      //          //tx.pkt.data = tx.pkt.data + vif.sig_o_data;
       //       end
 
       //       // state = 4 -> val = 1, sop = 0, eop = 1
       //       if(state == OEOP_1)
       //       begin
       //          tx.pkt.size = tx.pkt.size + vif.sig_o_vbc;
-      //          tx.pkt.data = tx.pkt.data << vif.sig_o_vbc;
-      //          tx.pkt.data = tx.pkt.data + vif.sig_o_data;
+      //          //tx.pkt.data = tx.pkt.data << vif.sig_o_vbc;
+      //          //tx.pkt.data = tx.pkt.data + vif.sig_o_data;
+               
+      //          tx.pkt.data = 1280'hCAFEBEBEDEADBEEF5252;
       //          // write transaction ////
       //          mon_ap.write(tx);
       //       end
