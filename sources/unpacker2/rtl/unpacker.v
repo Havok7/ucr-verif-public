@@ -190,6 +190,15 @@ always_comb begin
     endcase
 end
 
+    //`ifdef ASSERT_ON
+    //    assert property(@(posedge clk) if(!vif.sig_val && vif.sig_reset_L) 
+    //        $error("NO_VALIDO")
+    //    ) else begin
+    //        $display ("Pass");
+    //    end
+    //`endif
+
+
 
 
 endmodule
