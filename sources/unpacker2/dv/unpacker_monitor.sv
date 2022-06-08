@@ -39,7 +39,7 @@ class unpacker_monitor_in extends uvm_monitor;
       forever begin
          @(posedge vif.sig_clock)
          begin
-            //covgrp1_in.sample();
+            covgrp1_in.sample();
             if(vif.sig_val==1)
             begin
                if(vif.sig_ready==1)
@@ -103,6 +103,7 @@ class unpacker_monitor_out extends uvm_monitor;
       forever begin
          @(posedge vif.sig_clock)
          begin
+            covgrp2_out.sample();
             if(vif.sig_o_val==1)
             begin
                tx.pkt.size = tx.pkt.size + vif.sig_o_vbc;
