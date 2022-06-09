@@ -5,7 +5,7 @@ class unpacker_monitor_in extends uvm_monitor;
 
    virtual unpacker_if vif;
 
-   covergroup covgrp1_in; //@(posedge vif.sig_clock);
+   covergroup covgrp1_in;
       reset_L :   coverpoint vif.sig_reset_L;
       val :   coverpoint vif.sig_val;
       sop :   coverpoint vif.sig_sop;
@@ -39,7 +39,7 @@ class unpacker_monitor_in extends uvm_monitor;
       forever begin
          @(posedge vif.sig_clock)
          begin
-            //covgrp1_in.sample();
+            covgrp1_in.sample();
             if(vif.sig_val==1)
             begin
                if(vif.sig_ready==1)
@@ -71,7 +71,7 @@ class unpacker_monitor_out extends uvm_monitor;
 
    virtual unpacker_if vif;
 
-   covergroup covgrp2_out; //@(posedge vif.sig_clock);
+   covergroup covgrp2_out;
       o_val :   coverpoint vif.sig_o_val;
       o_sop :   coverpoint vif.sig_o_sop;
       o_eop :   coverpoint vif.sig_o_eop;
@@ -103,6 +103,7 @@ class unpacker_monitor_out extends uvm_monitor;
       forever begin
          @(posedge vif.sig_clock)
          begin
+            covgrp2_out.sample();
             if(vif.sig_o_val==1)
             begin
                tx.pkt.size = tx.pkt.size + vif.sig_o_vbc;
