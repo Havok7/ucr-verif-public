@@ -29,7 +29,8 @@ endclass: tlm_packet
 class unpacker_transaction extends uvm_sequence_item;
    rand op_t op;
    rand tlm_packet pkt;
-   rand integer rst_size;
+   rand integer rst_start;
+   rand integer rst_hold;
 
    constraint op_dist {
       op dist {
@@ -37,7 +38,8 @@ class unpacker_transaction extends uvm_sequence_item;
             OP_RESET  := 1
       };
    }
-   constraint limit_reset { rst_size >= 1; rst_size <= 5; }
+   constraint limit_reset_start { rst_start >= 0; rst_start <= 10; }
+   constraint limit_reset_hold { rst_hold >= 1; rst_hold <= 5; }
 
    function new(string name = "");
       super.new(name);
@@ -51,14 +53,15 @@ class unpacker_transaction extends uvm_sequence_item;
       if (tlm.op == OP_PACKET) begin
          tlm.pkt = pkt.clone();
       end
-      tlm.rst_size = rst_size;
+      tlm.rst_start = rst_start;
+      tlm.rst_hold = rst_hold;
       return tlm;
    endfunction: clone
 
    `uvm_object_utils_begin(unpacker_transaction)
       `uvm_field_enum(op_t,op,UVM_ALL_ON)
       `uvm_field_object(pkt,UVM_ALL_ON)
-      `uvm_field_int(rst_size,UVM_ALL_ON)
+      `uvm_field_int(rst_hold,UVM_ALL_ON)
    `uvm_object_utils_end
 endclass: unpacker_transaction
 

@@ -29,25 +29,30 @@ class unpacker_monitor_in extends uvm_monitor;
       forever begin
          @(posedge vif.sig_clock)
          begin
-            if(vif.sig_val==1)
-            begin
-               if(vif.sig_ready==1)
-               begin
-                  tlm.pkt.size = tlm.pkt.size + vif.sig_vbc;
-                  shift = shift + 160*8;
-                  tlm.pkt.data = tlm.pkt.data + (vif.sig_data << shift);
-                  if (vif.sig_sop==1)
-                  begin
-                     shift = 0;
-                     tlm.pkt.size = vif.sig_vbc;
-                     tlm.pkt.data = vif.sig_data;
-                  end
-                  if (vif.sig_eop==1)
-                  begin
-                     mon_ap.write(tlm.clone());
-                  end
-               end
-            end
+            if(vif.sig_reset_L==0)
+              begin
+                 // This is just to discard the current pkt TLM
+                 tlm.op = OP_RESET;
+                 continue;
+              end
+
+            if(vif.sig_val==1 && vif.sig_ready==1)
+              begin
+                 tlm.pkt.size = tlm.pkt.size + vif.sig_vbc;
+                 shift = shift + 160*8;
+                 tlm.pkt.data = tlm.pkt.data + (vif.sig_data << shift);
+                 if (vif.sig_sop==1)
+                   begin
+                      shift = 0;
+                      tlm.op = OP_PACKET;
+                      tlm.pkt.size = vif.sig_vbc;
+                      tlm.pkt.data = vif.sig_data;
+                   end
+                 if (vif.sig_eop==1 && tlm.op==OP_PACKET)
+                   begin
+                      mon_ap.write(tlm.clone());
+                   end
+              end
          end
       end
       

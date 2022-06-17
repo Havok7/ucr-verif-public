@@ -59,7 +59,7 @@ class unpacker_test extends uvm_test;
       // `uvm_info("test", "Testing large packet sizes", UVM_LOW);
       // send_pkt_seq_size_range(160, 1024, 10);
 
-      #100
+      #500
       phase.drop_objection(.obj(this));
    endtask: run_phase
 
