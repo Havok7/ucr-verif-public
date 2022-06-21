@@ -9,11 +9,11 @@ class unpacker_monitor_in extends uvm_monitor;
 
    covergroup covgrp1_in;
       // 1. Check sizes in the vbc
-      vbc_val:   coverpoint vif.sig_vbc {
-         bins tiny_val = {[1:32]};
-         bins small_val = {[33:64]};
-         bins medium_val = {[64:100]};
-         bins large_val = {[100:160]};
+      vbc_size:   coverpoint vif.sig_vbc {
+         bins tiny_size = {[1:32]};
+         bins small_size = {[33:64]};
+         bins medium_size = {[64:100]};
+         bins large_size = {[100:160]};
       }
 
       // 2. Check transitions between different types of sizes in vbc
@@ -33,7 +33,7 @@ class unpacker_monitor_in extends uvm_monitor;
       }
 
       // 4. Check differents types of transaction ops
-      tlm_ops_val: coverpoint tlm.op {
+      tlm_ops_cases: coverpoint tlm.op {
          bins rst = {OP_RESET_L};
          bins pkt = {OP_PACKET};
       }
@@ -46,7 +46,7 @@ class unpacker_monitor_in extends uvm_monitor;
       }
 
       // 6. Check different tlm pkt sizes
-      pkt_size_val: coverpoint tlm.pkt.size {
+      pkt_size: coverpoint tlm.pkt.size {
          bins tiny_size = {[1:32]};
          bins small_size = {[33:100]};
          bins medium_size = {[100:160]};
@@ -92,13 +92,13 @@ class unpacker_monitor_in extends uvm_monitor;
       }
 
       // 11: Combinations of SOP and EOP
-      sop_val: coverpoint vif.sig_sop {
+      sop_cases: coverpoint vif.sig_sop {
          option.weight = 0;
       }
-      eop_val: coverpoint vif.sig_eop {
+      eop_cases: coverpoint vif.sig_eop {
          option.weight = 0;
       }
-      sop_x_eop: cross sop_val, eop_val;
+      sop_x_eop: cross sop_cases, eop_cases;
 
    endgroup: covgrp1_in 
 
@@ -169,11 +169,11 @@ class unpacker_monitor_out extends uvm_monitor;
 
    covergroup covgrp1_out;
       // 12. Check all sizes in the o_vbc
-      o_vbc_val: coverpoint vif.sig_o_vbc {
-         bins tiny_val = {[1:9]};
-         bins small_val = {[10:19]};
-         bins medium_val = {[20:29]};
-         bins large_val = {[30:32]};
+      o_vbc_size: coverpoint vif.sig_o_vbc {
+         bins tiny_size = {[1:9]};
+         bins small_size = {[10:19]};
+         bins medium_size = {[20:29]};
+         bins large_size = {[30:32]};
       }
 
       // 13. Check corner cases in transitions of o_vbc sizes
@@ -195,13 +195,13 @@ class unpacker_monitor_out extends uvm_monitor;
       }
 
       // 16: Combinations of O_SOP and O_EOP
-      o_sop_val: coverpoint vif.sig_o_sop {
+      o_sop_cases: coverpoint vif.sig_o_sop {
          option.weight = 0;
       }
-      o_eop_val: coverpoint vif.sig_o_eop {
+      o_eop_cases: coverpoint vif.sig_o_eop {
          option.weight = 0;
       }
-      o_sop_x_o_eop: cross o_sop_val, o_eop_val;
+      o_sop_x_o_eop: cross o_sop_cases, o_eop_cases;
 
    endgroup: covgrp1_out 
 
