@@ -8,38 +8,53 @@ class unpacker_monitor_in extends uvm_monitor;
    unpacker_transaction tlm;
 
    covergroup covgrp1_in;
-      // Stay on/off 3 times in the reset
-      reset_L : coverpoint vif.sig_reset_L {
-         bins test_reset = (0=>1=>0=>1=>0=>1);
+      // 1. Check sizes in the vbc
+      vbc_val:   coverpoint vif.sig_vbc {
+         bins tiny_val = {[1:32]};
+         bins small_val = {[33:64]};
+         bins medium_val = {[64:100]};
+         bins large_val = {[100:160]};
       }
-      // Check all sizes in the vbc
-      all_vbc_size :   coverpoint vif.sig_vbc;
-      // Check transitions between different types of sizes in vbc
-      size_vbc_size_vbc  : coverpoint vif.sig_vbc {
+
+      // 2. Check transitions between different types of sizes in vbc
+      vbc_trans: coverpoint vif.sig_vbc {
          bins small_small = ([1:32]=>[1:32]);
          bins small_large = ([1:32]=>[33:160]);
          bins large_small = ([33:160]=>[1:32]);
          bins large_large = ([33:160]=>[33:160]);
       }
-      // Check corner cases in transitions of vbc sizes
-      size_vbc_corner_cases  : coverpoint vif.sig_vbc {
-         bins case_1a31_32_33a63 = ([1:31]=>32=>[33:63]);
+
+      // 3. Check corner cases in transitions of vbc sizes
+      vbc_corner: coverpoint vif.sig_vbc {
          bins case_32_32_32 = (32=>32=>32);
          bins case_160_160_160 = (160=>160=>160);
          bins case_1a32_160_1a32 = ([1:32]=>160=>[1:32]);
-         bins case_160_32a33_160 = (160=>[1:32]=>160);
          bins case_160_33a63_160 = (160=>[33:63]=>160);
       }
-      // Check if we are receiving different data
-      random_data :   coverpoint vif.sig_data;
-      // Check if we are receiving diferent data in the transaction tlm
-      random_data_tlm :   coverpoint tlm.pkt.data;
-      // Check transitions of differents types of transactions reset/packets
-      diferent_transactions :   coverpoint tlm.op;
-      // Check if the transaction generates all sizes
-      all_pkt_size :   coverpoint tlm.pkt.size;
-      // Check transitions between different types of sizes in tlm.pkt 
-      pkt_pkt  : coverpoint tlm.pkt.size {
+
+      // 4. Check differents types of transaction ops
+      tlm_ops_val: coverpoint tlm.op {
+         bins rst = {OP_RESET_L};
+         bins pkt = {OP_PACKET};
+      }
+
+      // 5. Check transitions of transaction ops
+      tlm_ops_trans:  coverpoint tlm.op {
+         bins pkt_rst = (OP_PACKET=>OP_RESET_L);
+         bins rst_pkt = (OP_RESET_L=>OP_PACKET);
+         bins rst_rst = (OP_RESET_L=>OP_RESET_L);
+      }
+
+      // 6. Check different tlm pkt sizes
+      pkt_size_val: coverpoint tlm.pkt.size {
+         bins tiny_size = {[1:32]};
+         bins small_size = {[33:100]};
+         bins medium_size = {[100:160]};
+         bins large_size = {[160:1024]};
+      }
+
+      // 7. Check transitions between different tlm pkt sizes
+      pkt_trans: coverpoint tlm.pkt.size {
          bins small_small = ([1:32]=>[1:32]);
          bins small_medium = ([1:32]=>[33:160]);
          bins small_large = ([1:32]=>[161:1024]);
@@ -50,8 +65,9 @@ class unpacker_monitor_in extends uvm_monitor;
          bins large_medium = ([161:1024]=>[33:160]);
          bins large_large = ([161:1024]=>[161:1024]);
       }
-      // Check differents situations of SOP
-      check_sop  : coverpoint vif.sig_sop {
+
+      // 8. Check different scenarios of SOP
+      sop_scenarios: coverpoint vif.sig_sop {
          bins val0 = (1=>1=>1=>1=>1=>1);
          bins pre_pkt1_32 = (0=>1=>0);
          bins pre_pkt33_64 = (0=>1=>1=>0);
@@ -59,20 +75,31 @@ class unpacker_monitor_in extends uvm_monitor;
          bins pre_pkt97_128 = (0=>1=>1=>1=>1=>0);
          bins pre_pkt129_160 = (0=>1=>1=>1=>1=>1=>0);
       }
-      // Check differents situations of EOP
-      check_eop  : coverpoint vif.sig_eop {
+
+      // 9. Check different scenarios of EOP
+      eop_scenarios: coverpoint vif.sig_eop {
          bins small_pkts_or_reset = (1=>1=>1=>1=>1=>1);
          bins pre_pkt160 = (0=>1=>1=>1=>1=>1=>0);
-         bins small_pkt_between_zeros = (0=>1=>0);
       }
-      // Check differents situations of READY
-      check_ready  : coverpoint vif.sig_ready {
+
+      // 10. Check different scenarios of READY
+      ready_scenarios: coverpoint vif.sig_ready {
          bins pkt129_160 = (1=>0=>0=>0=>0=>1);
          bins pkt97_128 = (1=>0=>0=>0=>1);
          bins pkt65_96 = (1=>0=>0=>1);
          bins pkt33_64 = (1=>0=>1);
          bins pkt1_32_or_val0_reset1 = (1=>1);
       }
+
+      // 11: Combinations of SOP and EOP
+      sop_val: coverpoint vif.sig_sop {
+         option.weight = 0;
+      }
+      eop_val: coverpoint vif.sig_eop {
+         option.weight = 0;
+      }
+      sop_x_eop: cross sop_val, eop_val;
+
    endgroup: covgrp1_in 
 
 
@@ -141,25 +168,41 @@ class unpacker_monitor_out extends uvm_monitor;
    unpacker_transaction tlm;
 
    covergroup covgrp1_out;
-      // Check if we are receiving different o_data
-      random_data :   coverpoint vif.sig_o_data;
-      // Check all sizes in the o_vbc
-      all_o_vbc_size :   coverpoint vif.sig_o_vbc;
-      // Check corner cases in transitions of o_vbc sizes
-      size_o_vbc_corner_cases  : coverpoint vif.sig_o_vbc {
+      // 12. Check all sizes in the o_vbc
+      o_vbc_val: coverpoint vif.sig_o_vbc {
+         bins tiny_val = {[1:9]};
+         bins small_val = {[10:19]};
+         bins medium_val = {[20:29]};
+         bins large_val = {[30:32]};
+      }
+
+      // 13. Check corner cases in transitions of o_vbc sizes
+      o_vbc_corner: coverpoint vif.sig_o_vbc {
          bins o_vbc_small_32 = ([1:32]=>32);
          bins o_vbc_32_small = (32=>[1:32]);
       }
-      // Check differents situations of O_SOP
-      check_o_sop  : coverpoint vif.sig_o_sop {
+
+      // 14. Check different scenarios of O_SOP
+      o_sop_scenarios: coverpoint vif.sig_o_sop {
          bins normal = (0=>1=>0);
          bins small_pkts = (1=>1);
       }
-      // Check differents situations of O_EOP
-      check_o_eop  : coverpoint vif.sig_o_eop {
+
+      // 15. Check different scenarios of O_EOP
+      o_eop_scenarios: coverpoint vif.sig_o_eop {
          bins normal = (0=>1=>0);
          bins small_pkts = (1=>1);
       }
+
+      // 16: Combinations of O_SOP and O_EOP
+      o_sop_val: coverpoint vif.sig_o_sop {
+         option.weight = 0;
+      }
+      o_eop_val: coverpoint vif.sig_o_eop {
+         option.weight = 0;
+      }
+      o_sop_x_o_eop: cross o_sop_val, o_eop_val;
+
    endgroup: covgrp1_out 
 
    function new(string name, uvm_component parent);
