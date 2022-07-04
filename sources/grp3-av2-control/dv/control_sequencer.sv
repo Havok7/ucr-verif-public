@@ -1,0 +1,1 @@
+typedef uvm_sequencer#(control_tlm) control_sequencer;

@@ -7,11 +7,9 @@
 
 `timescale 1ns/1ps
 
-//`include "counter_pkg.svh"
 
 module tb();
-	import uvm_pkg::*;
-    import counter_pkg::*;
+
 
     localparam WIDTH_P = 4;
 
@@ -20,23 +18,23 @@ module tb();
     reg en;
 
 
-    // initial begin
-    //     $display("Starting simulation");
-    //     #5ns;
-    //     en <= 0;
-    //     clk <= 0;
-    //     reset_L <= 0;
-    //     #20ns;
-    //     reset_L <= 1;
-    //     repeat (5) begin
-    //         repeat (10) @(posedge clk);
-    //         en <= 1;
-    //         repeat (10) @(posedge clk);
-    //         en <= 0;
-    //     end
-    //     #1000ns;
-    //     $finish();
-    // end
+    initial begin
+        $display("Starting simulation");
+        #5ns;
+        en <= 0;
+        clk <= 0;
+        reset_L <= 0;
+        #20ns;
+        reset_L <= 1;
+        repeat (5) begin
+            repeat (10) @(posedge clk);
+            en <= 1;
+            repeat (10) @(posedge clk);
+            en <= 0;
+        end
+        #1000ns;
+        $finish();
+    end
 
 
      // clk gen
@@ -64,15 +62,15 @@ module tb();
         $dumpvars(0,tb);
     end
 
-    initial begin
-		// //Registers the Interface in the configuration block so that other
-		// //blocks can use it
-		// uvm_resource_db#(virtual simpleadder_if)::set
-		// 	(.scope("ifs"), .name("simpleadder_if"), .val(vif));
+    // initial begin
+	// 	// //Registers the Interface in the configuration block so that other
+	// 	// //blocks can use it
+	// 	// uvm_resource_db#(virtual simpleadder_if)::set
+	// 	// 	(.scope("ifs"), .name("simpleadder_if"), .val(vif));
 
-		//Executes the test
-		run_test();
-	end
+	// 	//Executes the test
+	// 	run_test();
+	// end
 
 
 endmodule

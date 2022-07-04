@@ -3,7 +3,9 @@
 
 INSTALL ?= 0
 VERSION ?= v0.0.2
+#VERSION ?= v0.0.1
 PLANET ?= naboo
+#PLANET ?= tatooine
 
 IMG = mjalvar/vivado-$(PLANET):$(VERSION)
 RST = $(shell find ./* -iname "*.rst" -o -iname "*.py" -o -iname "*.css" -o -iname "*.png" -o -iname "*.jpg")

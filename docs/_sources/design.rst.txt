@@ -70,7 +70,7 @@ Control
             { "name": "IDL",  "bits": 1, "attr": "RO" },
             { "name": "ERR",  "bits": 1, "attr": "RO", "type" : 4 },
             { "bits": 1},
-            { "name": "ID",   "bits": 4, "attr": "RW", "type" : 3 }
+            { "name": "ID",   "bits": 4, "attr": "RO", "type" : 3 }
         ]
 
 ::

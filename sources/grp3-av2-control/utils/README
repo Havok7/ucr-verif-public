@@ -1,0 +1,20 @@
+El generadort automtizado de tests, genera una cantidad variable de testa, cada uno utilizando una semilla disitinta.
+
+Primero se genera una carpeta unica con el siguiente formato: dir NUM1 NUM2
+
+Se puede correr las veces que se desee, el nombre de la carpeta siemrpe sera distinto, por lo que no borrara tests viejos, no sobre escribira los que ya estan.
+
+Como utilizar el generador de tests:
+
+Opcion1: Por defecto esa opcion genera 10 tests aleatorios.
+    make tests
+
+Opcion2: realiza una cantidad de tests parametrizable, genera NUM cantidad de testa aleatorios con semillas distintas.
+    make tests arg1=<NUM>
+
+
+Como generar reporte de coverge:
+    make coverage_test
+
+Como eliminar todas las subcarpetas generadoas por el generador de tests.:
+    make clean tests
