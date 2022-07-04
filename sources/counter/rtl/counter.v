@@ -51,8 +51,39 @@ module counter #(
             inc :   coverpoint inc;
         endgroup
 
+        covergroup covgrp2 @(posedge clk);
+            coverpoint val {
+                bins zero = {0};
+                bins lo = {[1:3], 5};
+                bins hi = {[8:$]};
+                //bins misc = default;
+                //illegal_bins four = {4};
+            }
+        endgroup
+
+        covergroup covgrp3  @(posedge clk);
+            coverpoint val {
+                bins tr_zero = (1=>0), (2=>0), (3=>0), (15=>0);
+            }
+        endgroup
+
+
+        covergroup covgrp4  @(posedge clk);
+            en  :   coverpoint en;
+            inc :   coverpoint inc {
+                bins zero = {0};
+                bins non_zero = {[1:$]};
+            }
+            clr :   coverpoint clr;
+            reset_L: coverpoint reset_L;
+            cross en, inc, clr, reset_L;
+        endgroup
+
         initial begin
             covgrp1 cg1 = new();
+            covgrp2 cg2 = new();
+            covgrp3 cg3 = new();
+            covgrp4 cg4 = new();
         end
     `endif
 

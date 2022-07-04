@@ -1,0 +1,1 @@
+typedef uvm_sequencer#(counter_tlm) counter_sequencer;

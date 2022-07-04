@@ -117,7 +117,7 @@ Estrategia de verificación
   * Las preguntas básicas que un ingeniero en verificación debe hacerse:
 
     * ¿Estoy creando todos los posibles escenarios?
-    * ¿Cómo identifico cuando una falla a ocurrido?
+    * ¿Cómo identifico cuando una falla ha ocurrido?
 
   * El ingeniero en verificación debe primero leer toda la documentación existente del diseño.
   * Entender todas las entradas y salidas. Para luego entender la funcionalidad del diseño y
