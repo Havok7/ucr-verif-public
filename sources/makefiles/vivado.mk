@@ -74,7 +74,7 @@ $(TB_TOP).wdb: .elab.timestamp
 	@echo $(ALL_SV_FILES)
 	$(call LOG,Compiling source files)
 	xvlog $(COMP_RTL_OPT) $(SRC_RTL_EXTRA) $(SRC_RTL_P) -i $(PROJ)/rtl $(DEFINE_OPT)
-	xvlog $(COMP_VERIF_OPT) $(SRC_VERIF_P) -i $(PROJ)/dv -i $(PROJ)/rtl $(DEFINE_OPT)
+	xvlog $(COMP_VERIF_OPT) $(SRC_RTL_EXTRA) $(SRC_VERIF_P) -i $(PROJ)/dv -i $(PROJ)/rtl $(DEFINE_OPT)
 	touch .comp.timestamp
 
 .PHONY: clean

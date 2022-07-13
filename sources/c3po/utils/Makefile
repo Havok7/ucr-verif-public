@@ -1,12 +1,15 @@
 # makefile
-# project: counter
+# project: c3po
 # melvin.alvarado
 
-SRC_VERIF = tb.v
+SRC_VERIF = c3po_pkg.sv c3po_tb_top.sv
 SRC_RTL = c3po_regs.v c3po.v
-TB_TOP = tb
-#DEFINE = ASSERT_ON COVERAGE_ON
+TB_TOP = c3po_tb_top
+# DEFINE = ASSERT_ON COVERAGE_ON
 
-SRC_RTL_EXTRA = -i $(CODE)/control/rtl -i $(CODE)/regs/rtl -i $(CODE)/unpacker/rtl -i $(CODE)/counter/rtl $(COMMON)/rtl/common.vh
+SRC_RTL_EXTRA = -i $(CODE)/control/rtl -i $(CODE)/regs/rtl -i $(CODE)/unpacker2/rtl -i $(CODE)/counter/rtl $(COMMON)/rtl/common.vh
+
+SIM_OPT = --testplusarg UVM_TESTNAME=c3po_test
+SIM_OPT += -sv_seed random
 
 include $(CODE)/makefiles/vivado.mk

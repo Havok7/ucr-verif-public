@@ -84,8 +84,6 @@ generate
             .reset_L(reset_L),
 
             .cfg_port_enable(cfg_port_enable[i]),
-            //.val(val_inst),
-            //.val(val_inst&ready[i]),
             .val(val_inst[i]&ready[i]),
             .sop(sop),
             .eop(eop),
@@ -118,7 +116,7 @@ generate
             .reset_L(reset_L),
             .en(cnt0_enable),
             .inc(cnt0_inc),
-            .clr(0),
+            .clr(1'b0),
 
             .overflow(),
             .non_zero(),
@@ -148,8 +146,6 @@ generate
             .eop(eop_d),
             .vbc(vbc_d),
             .data(data_d),
-
-            .cfg_gap('0),
 
             .o_val(o_val[i]),
             .o_sop(o_sop[i]),
