@@ -35,7 +35,7 @@ class c3po_test extends uvm_test;
       phase.raise_objection(.obj(this));
 
       `uvm_info("test", "Testing all packet sizes", UVM_LOW);
-      send_pkt_seq_size_range(1, 1024, 1000);
+      send_pkt_seq_size_range(1, 1024, 100);
 
       #500
       phase.drop_objection(.obj(this));

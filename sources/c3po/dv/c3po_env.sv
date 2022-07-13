@@ -1,8 +1,8 @@
-class c3po_env extends uvm_env;
+class c3po_env #(PORTS_P=4) extends uvm_env;
    `uvm_component_utils(c3po_env)
 
-   c3po_agent agent;
-   c3po_scoreboard sb;
+   c3po_agent #(.PORTS_P(PORTS_P)) agent;
+   c3po_scoreboard #(.PORTS_P(PORTS_P)) sb;
 
    function new(string name, uvm_component parent);
       super.new(name, parent);
@@ -16,8 +16,9 @@ class c3po_env extends uvm_env;
 
    function void connect_phase(uvm_phase phase);
       super.connect_phase(phase);
-      // TODO: Array of analysis ports?
-      agent.agent_ap_in.connect(sb.sb_export_in);
-      agent.agent_ap_out.connect(sb.sb_export_out);
+      for (int i=0; i < PORTS_P; ++i) begin
+         agent.agent_ap_in[i].connect(sb.sb_export_in[i]);
+         agent.agent_ap_out[i].connect(sb.sb_export_out[i]);
+      end
    endfunction: connect_phase
 endclass: c3po_env

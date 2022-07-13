@@ -49,8 +49,6 @@ end
 
 generate
     for(genvar i=0; i<PORTS_P; ++i) begin : slice
-
-
         reg_control # (
             .ADDR_SIZE_P(ADDR_SIZE_P),
             .RESET_PORT_ID(i%2),
@@ -71,7 +69,6 @@ generate
             .read_val(read_val_control[i]),
             .ack(ack_control[i])
         );
-
     end
 endgenerate
 

@@ -14,6 +14,7 @@ module reg_control #(
     parameter REG_SIZE_P = 32,
     parameter ADDR_SIZE_P = 4,
     parameter RESET_PORT_ID = 0,
+    parameter RESET_PORT_ENABLE = 1,
     parameter REG_ADDR = 0
 
 )(
@@ -62,7 +63,7 @@ module reg_control #(
         .wr_en(wr_en),
         .write_val(write_val[0]),
         .sig_val('0),
-        .reset_val('0),
+        .reset_val(RESET_PORT_ENABLE[0]),
         .val(cfg_port_enable)
     );
 
