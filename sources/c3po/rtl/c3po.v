@@ -41,31 +41,7 @@ module c3po #(
 );
 
 logic [PORTS_P-1:0]       cfg_port_enable;
-
-logic sop_d, eop_d;
-logic [3:0] id_d;
-logic [7:0] vbc_d;
-logic [160*8-1:0] data_d;
 logic [PORTS_P-1:0] val_inst, val_ctrl;
-
-
-
-always @(posedge clk) begin
-    if(reset_L==1'b0) begin
-        sop_d <= '0;
-        eop_d <= '0;
-        id_d <= '0;
-        vbc_d <= '0;
-        data_d <= '0;
-    end
-    else begin
-        sop_d <= sop;
-        eop_d <= eop;
-        id_d <= id;
-        vbc_d <= vbc;
-        data_d <= data;
-    end
-end
 
 
 generate
@@ -130,10 +106,10 @@ generate
             .reset_L(reset_L),
 
             .val(val_ctrl[i]),
-            .sop(sop_d),
-            .eop(eop_d),
-            .vbc(vbc_d),
-            .data(data_d),
+            .sop(sop),
+            .eop(eop),
+            .vbc(vbc),
+            .data(data),
 
             .o_val(o_val[i]),
             .o_sop(o_sop[i]),

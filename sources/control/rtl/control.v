@@ -8,9 +8,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module control_fsm #(
-    //parameter int WIDTH_P = 4
-)(
+module control_fsm(
 
     input clk,
     input reset_L,
@@ -51,8 +49,6 @@ reg [1:0] state, nxt_state;
 `endif
 
 wire sop_int, eop_int;
-reg prev_enable;
-
 
 assign sop_int = val & sop;
 assign eop_int = val & eop;
@@ -71,49 +67,47 @@ always_comb begin
 
     case(state)
 
-        RESET: begin
+        RESET: begin // 00
             nxt_state = IDLE;
         end
 
-        IDLE: begin
+        IDLE: begin  // 01
             if(!sop_int && eop_int)
-            // if(eop)
                 nxt_state = ERROR;
             else if(sop_int && !eop_int)
                 nxt_state = WAIT_EOP;
         end
 
-        WAIT_EOP: begin
+        WAIT_EOP: begin  // 10
             if(!sop_int && eop_int)
                 nxt_state = IDLE;
             else if(sop_int)
                 nxt_state = ERROR;
         end
 
-        ERROR: begin
-            nxt_state = IDLE;
+        ERROR: begin  // 11
+            if(!sop_int && eop_int)  //Avance_2
+                nxt_state = ERROR;
+            else if(sop_int && !eop_int) //Avance_2
+                nxt_state = WAIT_EOP;
+            else
+                nxt_state = IDLE;
         end
 
     endcase
 end
 
-
 always @(posedge clk) begin
     if(reset_L == 1'b0) begin
-        prev_enable <= 1'b0;
         enable <= 1'b0;
     end
     else begin
-        if(nxt_state == IDLE) begin
+        if(nxt_state == IDLE || nxt_state == ERROR) begin
             enable <= cfg_port_enable;
-            prev_enable <= enable;
         end
-        else
-            enable <= prev_enable;
     end
 end
 
-assign error = (state == ERROR) ? 1'b1 : 1'b0;
-
+assign error = (nxt_state == ERROR) ? 1'b1 : 1'b0;
 
 endmodule
