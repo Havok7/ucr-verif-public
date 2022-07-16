@@ -15,12 +15,23 @@
 
 module c3po #(
     parameter PORTS_P = 4,
-    parameter CNT_SIZE_P = 8
+    parameter CNT_SIZE_P = 8,
+    parameter ADDR_SIZE_P = 6
 )(
     input clk,
     input reset_L,
 
-    // packet IN
+    // Reg IN
+    input [ADDR_SIZE_P-1:0] reg_addr,
+    input reg_req,
+    input reg_rd_wr,
+    input [31:0] reg_write_val,
+
+    // Reg OUT
+    output [31:0] reg_read_val,
+    output reg_ack,
+
+    // Packet IN
     input val,
     input sop,
     input eop,
@@ -28,7 +39,7 @@ module c3po #(
     input [7:0] vbc,
     input [160*8-1:0] data,
 
-    // packet OUT
+    // Packet OUT
     output reg [PORTS_P-1:0] o_val,
     output reg [PORTS_P-1:0] o_sop,
     output reg [PORTS_P-1:0] o_eop,
@@ -37,12 +48,11 @@ module c3po #(
     output reg [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt0_val, cnt1_val,
     output reg [PORTS_P-1:0] ready,
     output reg [PORTS_P-1:0] idle,
-    output reg [PORTS_P-1:0] [3:0] cfg_port_id
+    output reg [PORTS_P-1:0] [3:0] cfg_port_id,
+    output reg [PORTS_P-1:0] cfg_port_enable
 );
 
-logic [PORTS_P-1:0]       cfg_port_enable;
 logic [PORTS_P-1:0] val_inst, val_ctrl;
-
 
 generate
     for(genvar i=0; i<PORTS_P; ++i) begin : slice
@@ -127,9 +137,18 @@ endgenerate
     c3po_regs REG(
         .clk(clk),
         .reset_L(reset_L),
+
+        .addr(reg_addr),
+        .req(reg_req),
+        .rd_wr(reg_rd_wr),
+        .write_val(reg_write_val),
+        .read_val(reg_read_val),
+        .ack(reg_ack),
+
+        .cfg_ctrl_err(4'b0),
+        .cfg_ctrl_idle(4'b0),
         .cfg_port_id(cfg_port_id),
         .cfg_port_enable(cfg_port_enable)
-       // TODO: Connect: addr, rd_wr, req, write_val, read_val
     );
 
 

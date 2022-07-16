@@ -10,6 +10,7 @@ module c3po_tb_top #(parameter PORTS_P=4,
    import c3po_pkg::*;
 
    c3po_in_if vif_in();
+   c3po_reg_if vif_reg();
    c3po_out_if vif_out[PORTS_P]();
 
    wire [PORTS_P-1:0] o_sop;
@@ -22,6 +23,7 @@ module c3po_tb_top #(parameter PORTS_P=4,
    wire [PORTS_P-1:0] ready;
    wire [PORTS_P-1:0] idle;
    wire [PORTS_P-1:0] [3:0] cfg_port_id;
+   wire [PORTS_P-1:0] cfg_port_enable;
 
 generate
     // Connect DUT output signals with interfaces
@@ -36,12 +38,20 @@ generate
        assign vif_out[i].sig_ready = ready[i];
        assign vif_out[i].sig_idle = idle[i];
        assign vif_out[i].sig_cfg_port_id = cfg_port_id[i];
+       assign vif_out[i].sig_cfg_port_enable = cfg_port_enable[i];
     end
 endgenerate
 
    c3po #() dut(
                 .clk(vif_in.sig_clock),
                 .reset_L(vif_in.sig_reset_L),
+
+                .reg_addr(vif_reg.sig_addr),
+                .reg_req(vif_reg.sig_req),
+                .reg_rd_wr(vif_reg.sig_rd_wr),
+                .reg_write_val(vif_reg.sig_write_val),
+                .reg_read_val(vif_reg.sig_read_val),
+                .reg_ack(vif_reg.sig_ack),
 
                 .sop(vif_in.sig_sop),
                 .eop(vif_in.sig_eop),
@@ -59,7 +69,8 @@ endgenerate
                 .cnt1_val(cnt1_val),
                 .ready(ready),
                 .idle(idle),
-                .cfg_port_id(cfg_port_id));
+                .cfg_port_id(cfg_port_id),
+                .cfg_port_enable(cfg_port_enable));
 
 generate
    // Registers the Interfaces in the configuration block so that other
@@ -67,6 +78,8 @@ generate
    initial begin
       uvm_resource_db#(virtual c3po_in_if)::set
         (.scope("ifs"), .name("c3po_in_if"), .val(vif_in));
+      uvm_resource_db#(virtual c3po_reg_if)::set
+        (.scope("ifs"), .name("c3po_reg_if"), .val(vif_reg));
    end
 
    for(genvar p=0; p < PORTS_P; ++p) begin

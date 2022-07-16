@@ -32,7 +32,6 @@ module c3po_regs #(
     input      [31:0]       write_val,
     output reg [31:0]       read_val,
     output reg              ack
-
 );
 
 wire [PORTS_P-1:0]  [31:0] read_val_control;
@@ -51,7 +50,7 @@ generate
     for(genvar i=0; i<PORTS_P; ++i) begin : slice
         reg_control # (
             .ADDR_SIZE_P(ADDR_SIZE_P),
-            .RESET_PORT_ID(i%2),
+            .RESET_PORT_ID(i),
             .REG_ADDR(ADDR_OFFSET_P*i+0)
         ) REG_CONTROL(
             .clk(clk),
