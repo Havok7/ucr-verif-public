@@ -3,6 +3,8 @@ package c3po_pkg;
    import uvm_pkg::*;
 `include "uvm_macros.svh"
 
+`include "c3po_tlm.sv"
+`include "c3po_sequence.sv"
 `include "c3po_sequencer.sv"
 `include "c3po_monitor.sv"
 `include "c3po_driver.sv"
