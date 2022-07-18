@@ -47,20 +47,19 @@ module c3po #(
     output reg [PORTS_P-1:0] [32*8-1:0] o_data,
     output reg [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt0_val, cnt1_val,
     output reg [PORTS_P-1:0] ready,
-    output reg [PORTS_P-1:0] idle,
     output reg [PORTS_P-1:0] [3:0] cfg_port_id,
-    output reg [PORTS_P-1:0] cfg_port_enable
+    output reg [PORTS_P-1:0] ctrl_port_enable
 );
 
 logic [PORTS_P-1:0] val_inst, val_ctrl;
+logic [PORTS_P-1:0] cfg_port_enable;
+logic [PORTS_P-1:0] unpacker_idle;
 
 generate
     for(genvar i=0; i<PORTS_P; ++i) begin : slice
 
-        wire control_ena;
-
         assign val_inst[i] = (id==cfg_port_id[i]) ? val : '0;
-        assign val_ctrl[i] = (control_ena) ? val_inst[i] : '0;
+        assign val_ctrl[i] = (ctrl_port_enable[i]) ? val_inst[i] : '0;
 
         control_fsm CONTROL(
             .clk(clk),
@@ -72,8 +71,7 @@ generate
             .eop(eop),
 
             .error(),
-            .enable(control_ena)
-
+            .enable(ctrl_port_enable[i])
         );
 
         wire [CNT_SIZE_P-1:0] cnt0_inc, cnt1_inc;
@@ -127,7 +125,7 @@ generate
             .o_vbc(o_vbc[i]),
             .o_data(o_data[i]),
 
-            .idle(idle[i]),
+            .idle(unpacker_idle[i]),
             .ready(ready[i])
         );
 

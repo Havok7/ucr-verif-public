@@ -1,7 +1,8 @@
 class c3po_driver #(MAX_DIN_SIZE=160,
                     PORTS_P=4,
                     ADDR_OFFSET_P=10,
-                    ADDR_SIZE_P=6) extends uvm_driver#(c3po_transaction);
+                    ADDR_SIZE_P=6,
+                    NON_READY_CLKS_TIMEOUT=100) extends uvm_driver#(c3po_transaction);
    `uvm_component_utils(c3po_driver)
 
    virtual c3po_in_if vif_in;
@@ -137,6 +138,7 @@ class c3po_driver #(MAX_DIN_SIZE=160,
    task drive_pkt(c3po_transaction tlm, uvm_phase phase);
       integer pkt_offset = 0, send = 0, data_size = 0, remaining_bytes = 0;
       bit [MAX_DIN_SIZE*8-1:0] temp_data = 0;
+      integer non_ready_clks = 0;
 
       phase.raise_objection(.obj(this));
 
@@ -163,20 +165,31 @@ class c3po_driver #(MAX_DIN_SIZE=160,
            end
          else begin
             // If already sending a packet
-            if (vif_in.sig_val == 1 && slices_ready())
-              begin
-                 // Move data window or finish packet
-                 vif_in.sig_sop <= 1'b0;
-                 if (remaining_bytes > MAX_DIN_SIZE)
-                   begin
-                      remaining_bytes = remaining_bytes - MAX_DIN_SIZE;
-                      pkt_offset++;
-                   end else begin
-                      // Return to fetch new transaction
-                      phase.drop_objection(.obj(this));
-                      return;
-                   end
-              end
+            if (slices_ready()) begin
+               non_ready_clks = 0;
+               if (vif_in.sig_val == 1)
+                 begin
+                    // Move data window or finish packet
+                    vif_in.sig_sop <= 1'b0;
+                    if (remaining_bytes > MAX_DIN_SIZE)
+                      begin
+                         remaining_bytes = remaining_bytes - MAX_DIN_SIZE;
+                         pkt_offset++;
+                      end else begin
+                         // Return to fetch new transaction
+                         phase.drop_objection(.obj(this));
+                         return;
+                      end
+                 end
+            end else begin
+               non_ready_clks++;
+               if (non_ready_clks >= NON_READY_CLKS_TIMEOUT) begin
+                  `uvm_info("driver", "Timeout waiting for slices ready!", UVM_LOW);
+                  vif_in.sig_sop <= 1'b0;
+                  phase.drop_objection(.obj(this));
+                  return;
+               end
+            end
          end
 
          // Update packet data and signals
@@ -224,8 +237,6 @@ class c3po_driver #(MAX_DIN_SIZE=160,
       bit[ADDR_SIZE_P-1:0] reg_addr = ADDR_OFFSET_P * tlm.id;
 
       phase.raise_objection(.obj(this));
-      // `uvm_info("driver", $sformatf("tlm: id=%0d, cfg_id=%0d, start=%0d",
-      //                               tlm.id, tlm.cfg_id, tlm.start), UVM_LOW);
 
       repeat(tlm.start) @(posedge vif_in.sig_clock);
 
@@ -242,8 +253,6 @@ class c3po_driver #(MAX_DIN_SIZE=160,
       bit[ADDR_SIZE_P-1:0] reg_addr = ADDR_OFFSET_P * tlm.id;
 
       phase.raise_objection(.obj(this));
-      // `uvm_info("driver", $sformatf("tlm: id=%0d, cfg_enable=%0d, start=%0d",
-      //                               tlm.id, tlm.cfg_enable, tlm.start), UVM_LOW);
 
       repeat(tlm.start) @(posedge vif_in.sig_clock);
 

@@ -29,7 +29,7 @@ class c3po_pkt_sequence extends uvm_sequence#(c3po_transaction);
                 OP_VAL_L := do_val_l ? 1 : 0
             };
          });
-         if (slice_id > 0) begin
+         if (slice_id >= 0) begin
             tlm.id = slice_id;
          end
          finish_item(tlm);
@@ -65,7 +65,7 @@ class c3po_cfg_port_sequence extends uvm_sequence#(c3po_transaction);
          if (cfg_op inside {OP_CFG_PORT_ID, OP_CFG_PORT_ENABLE}) begin
             tlm.op = cfg_op;
          end
-         if (slice_id > 0) begin
+         if (slice_id >= 0) begin
             tlm.id = slice_id;
          end
          finish_item(tlm);
@@ -139,18 +139,31 @@ class c3po_base_test_sequence extends uvm_sequence#(c3po_transaction);
 
 endclass: c3po_base_test_sequence
 
-class c3po_pkt_all_sequence extends c3po_base_test_sequence;
-  `uvm_object_utils(c3po_pkt_all_sequence)
+class c3po_pkt_all_simple_sequence extends c3po_base_test_sequence;
+  `uvm_object_utils(c3po_pkt_all_simple_sequence)
 
    function new(string name = "");
       super.new(name);
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_reset_l(0), .do_val_l(1));
+      send_pkt_seq_size_range(1, 1024, 100);
    endtask: body
 
-endclass: c3po_pkt_all_sequence
+endclass: c3po_pkt_all_simple_sequence
+
+class c3po_pkt_all_val_sequence extends c3po_base_test_sequence;
+  `uvm_object_utils(c3po_pkt_all_val_sequence)
+
+   function new(string name = "");
+      super.new(name);
+   endfunction: new
+
+   task body();
+      send_pkt_seq_size_range(1, 1024, 100, .do_val_l(1));
+   endtask: body
+
+endclass: c3po_pkt_all_val_sequence
 
 class c3po_pkt_all_reset_sequence extends c3po_base_test_sequence;
   `uvm_object_utils(c3po_pkt_all_reset_sequence)
@@ -160,13 +173,13 @@ class c3po_pkt_all_reset_sequence extends c3po_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_reset_l(1), .do_val_l(1));
+      send_pkt_seq_size_range(1, 1024, 100, .do_reset_l(1));
    endtask: body
 
 endclass: c3po_pkt_all_reset_sequence
 
-class c3po_pkt_corner_sequence extends c3po_base_test_sequence;
-  `uvm_object_utils(c3po_pkt_corner_sequence)
+class c3po_pkt_corner_sizes_sequence extends c3po_base_test_sequence;
+  `uvm_object_utils(c3po_pkt_corner_sizes_sequence)
 
    function new(string name = "");
       super.new(name);
@@ -182,7 +195,7 @@ class c3po_pkt_corner_sequence extends c3po_base_test_sequence;
       send_pkt_seq_size(161, 1);
    endtask: body
 
-endclass: c3po_pkt_corner_sequence
+endclass: c3po_pkt_corner_sizes_sequence
 
 class c3po_pkt_cfg_port_enable_sequence extends c3po_base_test_sequence;
   `uvm_object_utils(c3po_pkt_cfg_port_enable_sequence)
@@ -199,3 +212,19 @@ class c3po_pkt_cfg_port_enable_sequence extends c3po_base_test_sequence;
    endtask: body
 
 endclass: c3po_pkt_cfg_port_enable_sequence
+
+class c3po_pkt_cfg_port_id_sequence extends c3po_base_test_sequence;
+  `uvm_object_utils(c3po_pkt_cfg_port_id_sequence)
+
+   function new(string name = "");
+      super.new(name);
+   endfunction: new
+
+   task body();
+      fork
+         send_cfg_port_id_seq(100);
+         send_pkt_seq_size_range(1, 1024, 100);
+      join
+   endtask: body
+
+endclass: c3po_pkt_cfg_port_id_sequence

@@ -76,6 +76,8 @@ always_comb begin
                 nxt_state = ERROR;
             else if(sop_int && !eop_int)
                 nxt_state = WAIT_EOP;
+            else if(sop_int && eop_int)
+                nxt_state = IDLE;
         end
 
         WAIT_EOP: begin  // 10
