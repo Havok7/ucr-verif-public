@@ -72,7 +72,7 @@ assign total_word = (vbc_d==160) ? 5 : (vbc_d>>5)+|(vbc_d%32);
 
 //assign nxt_word = (nxt_pending==160) ? 5 : (nxt_pending>>5)+|(nxt_pending%32)-1;
 assign nxt_word = (nxt_pending==160) ? 5-1 : (nxt_pending>>5)+|(nxt_pending%32)-(nxt_pending&&1);
-assign word_comp = (total_word) ? total_word-word-1 : '0;
+assign word_comp = (total_word > word) ? total_word-word-1 : '0;
 
 assign o_data = data_d[word_comp*32*8 +: 32*8];
 

@@ -52,7 +52,8 @@ class c3po_monitor_in #(PORTS_P=4) extends uvm_monitor;
 
             if(vif_in.sig_val==1 &&
                vif_out.sig_ready==1 &&
-               vif_out.sig_cfg_port_id==in_port_id())
+               vif_out.sig_cfg_port_id==in_port_id() &&
+               vif_out.sig_ctrl_port_enable==1)
               begin
                  tlm.pkt.size = tlm.pkt.size + vif_in.sig_vbc;
                  shift = shift + 160*8;

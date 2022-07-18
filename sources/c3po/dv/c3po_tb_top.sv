@@ -21,9 +21,8 @@ module c3po_tb_top #(parameter PORTS_P=4,
    wire [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt0_val;
    wire [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt1_val;
    wire [PORTS_P-1:0] ready;
-   wire [PORTS_P-1:0] idle;
    wire [PORTS_P-1:0] [3:0] cfg_port_id;
-   wire [PORTS_P-1:0] cfg_port_enable;
+   wire [PORTS_P-1:0] ctrl_port_enable;
 
 generate
     // Connect DUT output signals with interfaces
@@ -36,9 +35,8 @@ generate
        assign vif_out[i].sig_cnt0_val = cnt0_val[i];
        assign vif_out[i].sig_cnt1_val = cnt1_val[i];
        assign vif_out[i].sig_ready = ready[i];
-       assign vif_out[i].sig_idle = idle[i];
        assign vif_out[i].sig_cfg_port_id = cfg_port_id[i];
-       assign vif_out[i].sig_cfg_port_enable = cfg_port_enable[i];
+       assign vif_out[i].sig_ctrl_port_enable = ctrl_port_enable[i];
     end
 endgenerate
 
@@ -68,9 +66,8 @@ endgenerate
                 .cnt0_val(cnt0_val),
                 .cnt1_val(cnt1_val),
                 .ready(ready),
-                .idle(idle),
                 .cfg_port_id(cfg_port_id),
-                .cfg_port_enable(cfg_port_enable));
+                .ctrl_port_enable(ctrl_port_enable));
 
 generate
    // Registers the Interfaces in the configuration block so that other
