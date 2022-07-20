@@ -6,8 +6,8 @@ class c3po_driver #(MAX_DIN_SIZE=160,
    `uvm_component_utils(c3po_driver)
 
    virtual c3po_in_if vif_in;
+   // TODO: Separate reg_if
    virtual c3po_reg_if vif_reg;
-   virtual c3po_out_if vif_out[PORTS_P];
    c3po_transaction tlm;
    semaphore pkt_sem;
    semaphore reg_sem;
@@ -25,11 +25,6 @@ class c3po_driver #(MAX_DIN_SIZE=160,
             (.scope("ifs"), .name("c3po_in_if"), .val(vif_in)));
       void'(uvm_resource_db#(virtual c3po_reg_if)::read_by_name
             (.scope("ifs"), .name("c3po_reg_if"), .val(vif_reg)));
-
-      for (int i=0; i < PORTS_P; ++i) begin
-         void'(uvm_resource_db#(virtual c3po_out_if)::read_by_name
-               (.scope("ifs"), .name($sformatf("c3po_out_if_%0d", i)), .val(vif_out[i])));
-      end
    endfunction: build_phase
 
    task run_phase(uvm_phase phase);
@@ -94,18 +89,11 @@ class c3po_driver #(MAX_DIN_SIZE=160,
       end
    endtask: run_phase
 
-   function integer in_port_id();
-      bit[3:0] id = (vif_in.sig_id !== 'bx) ? vif_in.sig_id : 0;
-      id = (id < PORTS_P) ? id : PORTS_P-1;
-      return id;
-   endfunction: in_port_id
-
    function bit slices_ready();
       bit      ready = 1;
-      integer in_port = in_port_id();
       for (int i=0; i < PORTS_P; ++i) begin
-         if (vif_out[i].sig_cfg_port_id == in_port) begin
-            ready &= vif_out[i].sig_ready;
+         if (vif_in.sig_cfg_port_id[i] == vif_in.sig_id) begin
+            ready &= vif_in.sig_ready[i];
          end
       end
       return ready;

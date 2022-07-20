@@ -18,7 +18,7 @@ class c3po_base_test extends uvm_test;
                                                 .contxt(get_full_name()));
       phase.raise_objection(.obj(this));
       assert(seq.randomize());
-      seq.start(env.agent.seqr);
+      seq.start(env.agent_in.seqr);
       #500
       phase.drop_objection(.obj(this));
    endtask: run_phase

@@ -21,23 +21,29 @@ module c3po_tb_top #(parameter PORTS_P=4,
    wire [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt0_val;
    wire [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt1_val;
    wire [PORTS_P-1:0] ready;
-   wire [PORTS_P-1:0] [3:0] cfg_port_id;
-   wire [PORTS_P-1:0] ctrl_port_enable;
 
 generate
-    // Connect DUT output signals with interfaces
-    for(genvar i=0; i < PORTS_P; ++i) begin
-       assign vif_out[i].sig_o_sop = o_sop[i];
-       assign vif_out[i].sig_o_eop = o_eop[i];
-       assign vif_out[i].sig_o_val = o_val[i];
-       assign vif_out[i].sig_o_vbc = o_vbc[i];
-       assign vif_out[i].sig_o_data = o_data[i];
-       assign vif_out[i].sig_cnt0_val = cnt0_val[i];
-       assign vif_out[i].sig_cnt1_val = cnt1_val[i];
-       assign vif_out[i].sig_ready = ready[i];
-       assign vif_out[i].sig_cfg_port_id = cfg_port_id[i];
-       assign vif_out[i].sig_ctrl_port_enable = ctrl_port_enable[i];
-    end
+   // Connect DUT global signals to interfaces
+   initial begin
+      assign vif_reg.sig_clock = vif_in.sig_clock;
+      assign vif_reg.sig_reset_L = vif_in.sig_reset_L;
+   end
+   // Connect DUT per-port signals to interfaces
+   for(genvar i=0; i < PORTS_P; ++i) begin
+      assign vif_out[i].sig_clock = vif_in.sig_clock;
+      assign vif_out[i].sig_reset_L = vif_in.sig_reset_L;
+      assign vif_out[i].sig_o_sop = o_sop[i];
+      assign vif_out[i].sig_o_eop = o_eop[i];
+      assign vif_out[i].sig_o_val = o_val[i];
+      assign vif_out[i].sig_o_vbc = o_vbc[i];
+      assign vif_out[i].sig_o_data = o_data[i];
+      assign vif_out[i].sig_cnt0_val = cnt0_val[i];
+      assign vif_out[i].sig_cnt1_val = cnt1_val[i];
+      assign vif_out[i].sig_ready = ready[i];
+      assign vif_in.sig_ready[i] = ready[i];
+      assign vif_in.sig_cfg_port_id[i] = dut.cfg_port_id[i];
+      assign vif_in.sig_ctrl_port_enable[i] = dut.ctrl_port_enable[i];
+   end
 endgenerate
 
    c3po #() dut(
@@ -65,9 +71,7 @@ endgenerate
                 .o_data(o_data),
                 .cnt0_val(cnt0_val),
                 .cnt1_val(cnt1_val),
-                .ready(ready),
-                .cfg_port_id(cfg_port_id),
-                .ctrl_port_enable(ctrl_port_enable));
+                .ready(ready));
 
 generate
    // Registers the Interfaces in the configuration block so that other
