@@ -1,7 +1,10 @@
 class c3po_env #(PORTS_P=4) extends uvm_env;
    `uvm_component_utils(c3po_env)
 
+   c3po_virt_sequencer vseqr;
+
    c3po_in_agent #(.PORTS_P(PORTS_P)) agent_in;
+   c3po_reg_agent agent_reg;
    c3po_out_agent agent_out[PORTS_P];
    c3po_scoreboard sb[PORTS_P];
 
@@ -11,7 +14,11 @@ class c3po_env #(PORTS_P=4) extends uvm_env;
 
    function void build_phase(uvm_phase phase);
       super.build_phase(phase);
+
+      vseqr = c3po_virt_sequencer::type_id::create(.name("vseqr"), .parent(this));
+
       agent_in = c3po_in_agent::type_id::create(.name("agent_in"), .parent(this));
+      agent_reg = c3po_reg_agent::type_id::create(.name("agent_reg"), .parent(this));
       for (int i=0; i < PORTS_P; ++i) begin
          agent_out[i] = c3po_out_agent::type_id::create(.name($sformatf("agent_out_%0d", i)), .parent(this));
          sb[i]        = c3po_scoreboard::type_id::create(.name($sformatf("sb_%0d", i)), .parent(this));
@@ -26,5 +33,8 @@ class c3po_env #(PORTS_P=4) extends uvm_env;
          agent_in.agent_ap.connect(sb[i].sb_export_in);
          agent_out[i].agent_ap.connect(sb[i].sb_export_out);
       end
+      vseqr.in_seqr = agent_in.seqr;
+      vseqr.reg_seqr = agent_reg.seqr;
    endfunction: connect_phase
+
 endclass: c3po_env

@@ -1,5 +1,5 @@
-class c3po_monitor_in #(PORTS_P=4) extends uvm_monitor;
-   `uvm_component_utils(c3po_monitor_in)
+class c3po_in_monitor #(PORTS_P=4) extends uvm_monitor;
+   `uvm_component_utils(c3po_in_monitor)
 
    uvm_analysis_port#(c3po_transaction) mon_ap;
 
@@ -71,10 +71,10 @@ class c3po_monitor_in #(PORTS_P=4) extends uvm_monitor;
       end
 
    endtask: run_phase
-endclass: c3po_monitor_in
+endclass: c3po_in_monitor
 
-class c3po_monitor_out extends uvm_monitor;
-   `uvm_component_utils(c3po_monitor_out)
+class c3po_out_monitor extends uvm_monitor;
+   `uvm_component_utils(c3po_out_monitor)
 
    uvm_analysis_port#(c3po_transaction) mon_ap;
 
@@ -141,4 +141,4 @@ class c3po_monitor_out extends uvm_monitor;
          end
       end
    endtask: run_phase
-endclass: c3po_monitor_out
+endclass: c3po_out_monitor
