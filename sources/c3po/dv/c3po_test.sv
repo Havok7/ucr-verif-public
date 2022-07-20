@@ -15,10 +15,11 @@ class c3po_base_test extends uvm_test;
    task run_phase(uvm_phase phase);
       c3po_base_test_sequence seq;
       seq = c3po_base_test_sequence::type_id::create(.name("seq"),
-                                                .contxt(get_full_name()));
+                                                     .contxt(get_full_name()));
+
       phase.raise_objection(.obj(this));
       assert(seq.randomize());
-      seq.start(env.agent.seqr);
+      seq.start(env.vseqr);
       #500
       phase.drop_objection(.obj(this));
    endtask: run_phase

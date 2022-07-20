@@ -46,14 +46,13 @@ module c3po #(
     output reg [PORTS_P-1:0] [7:0] o_vbc,
     output reg [PORTS_P-1:0] [32*8-1:0] o_data,
     output reg [PORTS_P-1:0] [CNT_SIZE_P-1:0] cnt0_val, cnt1_val,
-    output reg [PORTS_P-1:0] ready,
-    output reg [PORTS_P-1:0] [3:0] cfg_port_id,
-    output reg [PORTS_P-1:0] ctrl_port_enable
+    output reg [PORTS_P-1:0] ready
 );
 
 logic [PORTS_P-1:0] val_inst, val_ctrl;
-logic [PORTS_P-1:0] cfg_port_enable;
+logic [PORTS_P-1:0] cfg_port_enable, ctrl_port_enable;
 logic [PORTS_P-1:0] unpacker_idle;
+logic [PORTS_P-1:0] [3:0] cfg_port_id;
 
 generate
     for(genvar i=0; i<PORTS_P; ++i) begin : slice

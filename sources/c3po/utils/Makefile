@@ -2,7 +2,7 @@
 # project: c3po
 # melvin.alvarado
 
-TEST ?= c3po_pkt_all_test
+TEST ?= c3po_pkt_all_simple_test
 SEED ?= random
 
 SRC_VERIF = c3po_pkg.sv c3po_tb_top.sv

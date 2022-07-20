@@ -73,8 +73,9 @@ class c3po_cfg_port_sequence extends uvm_sequence#(c3po_transaction);
    endtask: body
 endclass: c3po_cfg_port_sequence
 
-class c3po_base_test_sequence extends uvm_sequence#(c3po_transaction);
+class c3po_base_test_sequence extends uvm_sequence #(uvm_sequence_item);
    `uvm_object_utils(c3po_base_test_sequence)
+   `uvm_declare_p_sequencer(c3po_virt_sequencer)
 
    function new(string name = "");
       super.new(name);
@@ -89,7 +90,7 @@ class c3po_base_test_sequence extends uvm_sequence#(c3po_transaction);
       seq.slice_id = slice_id;
 
       assert(seq.randomize());
-      seq.start(.sequencer(m_sequencer), .parent_sequence(this));
+      seq.start(.sequencer(p_sequencer.reg_seqr), .parent_sequence(this));
    endtask: send_cfg_port_id_seq
 
    task send_cfg_port_enable_seq(integer num_cfgs, integer slice_id=-1);
@@ -101,7 +102,7 @@ class c3po_base_test_sequence extends uvm_sequence#(c3po_transaction);
       seq.slice_id = slice_id;
 
       assert(seq.randomize());
-      seq.start(.sequencer(m_sequencer), .parent_sequence(this));
+      seq.start(.sequencer(p_sequencer.reg_seqr), .parent_sequence(this));
    endtask: send_cfg_port_enable_seq
 
    task send_pkt_seq_size_range(integer pkt_size_l,
@@ -121,7 +122,7 @@ class c3po_base_test_sequence extends uvm_sequence#(c3po_transaction);
       seq.slice_id = slice_id;
 
       assert(seq.randomize());
-      seq.start(.sequencer(m_sequencer), .parent_sequence(this));
+      seq.start(.sequencer(p_sequencer.in_seqr), .parent_sequence(this));
    endtask: send_pkt_seq_size_range
 
    task send_pkt_seq_size(integer pkt_size,
