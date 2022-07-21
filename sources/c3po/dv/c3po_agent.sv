@@ -1,7 +1,7 @@
 class c3po_in_agent #(PORTS_P=4) extends uvm_agent;
    `uvm_component_utils(c3po_in_agent)
 
-   uvm_analysis_port#(c3po_transaction) agent_ap;
+   uvm_analysis_port#(c3po_data_tlm) agent_ap;
 
    c3po_sequencer seqr;
    c3po_in_driver #(.PORTS_P(PORTS_P)) drvr;
@@ -31,7 +31,7 @@ endclass: c3po_in_agent
 class c3po_out_agent extends uvm_agent;
    `uvm_component_utils(c3po_out_agent)
 
-   uvm_analysis_port#(c3po_transaction) agent_ap;
+   uvm_analysis_port#(c3po_data_tlm) agent_ap;
 
    integer slice_id = 0;
    c3po_out_monitor mon_out;
@@ -61,7 +61,7 @@ endclass: c3po_out_agent
 class c3po_reg_agent extends uvm_agent;
    `uvm_component_utils(c3po_reg_agent)
 
-   c3po_sequencer seqr;
+   c3po_reg_sequencer seqr;
    c3po_reg_driver drvr;
 
    function new(string name, uvm_component parent);
@@ -71,7 +71,7 @@ class c3po_reg_agent extends uvm_agent;
    function void build_phase(uvm_phase phase);
       super.build_phase(phase);
 
-      seqr = c3po_sequencer::type_id::create(.name("seqr_reg"), .parent(this));
+      seqr = c3po_reg_sequencer::type_id::create(.name("seqr_reg"), .parent(this));
       drvr = c3po_reg_driver::type_id::create(.name("drvr_reg"), .parent(this));
    endfunction: build_phase
 

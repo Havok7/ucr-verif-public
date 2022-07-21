@@ -1,11 +1,11 @@
 class c3po_in_monitor #(PORTS_P=4) extends uvm_monitor;
    `uvm_component_utils(c3po_in_monitor)
 
-   uvm_analysis_port#(c3po_transaction) mon_ap;
+   uvm_analysis_port#(c3po_data_tlm) mon_ap;
 
    virtual c3po_in_if vif_in;
 
-   c3po_transaction tlm[PORTS_P];
+   c3po_data_tlm tlm[PORTS_P];
    integer shift[PORTS_P];
 
    function new(string name, uvm_component parent);
@@ -20,7 +20,7 @@ class c3po_in_monitor #(PORTS_P=4) extends uvm_monitor;
       mon_ap = new(.name("mon_ap_in"), .parent(this));
 
       for (int i=0; i < PORTS_P; ++i) begin
-         tlm[i] = c3po_transaction::type_id::create
+         tlm[i] = c3po_data_tlm::type_id::create
                  (.name($sformatf("tlm_%0d", i)), .contxt(get_full_name()));
          shift[i] = 0;
       end
@@ -76,12 +76,12 @@ endclass: c3po_in_monitor
 class c3po_out_monitor extends uvm_monitor;
    `uvm_component_utils(c3po_out_monitor)
 
-   uvm_analysis_port#(c3po_transaction) mon_ap;
+   uvm_analysis_port#(c3po_data_tlm) mon_ap;
 
    integer slice_id = 0;
    virtual c3po_out_if vif_out;
 
-   c3po_transaction tlm;
+   c3po_data_tlm tlm;
 
    function new(string name, uvm_component parent);
       super.new(name, parent);
@@ -100,7 +100,7 @@ class c3po_out_monitor extends uvm_monitor;
    task run_phase(uvm_phase phase);
       integer shift = 0;
 
-      tlm = c3po_transaction::type_id::create
+      tlm = c3po_data_tlm::type_id::create
               (.name("tlm"), .contxt(get_full_name()));
       tlm.op = OP_MAX;
 
