@@ -1,4 +1,4 @@
-class c3po_tlm_slice_filter #(type T = c3po_transaction,
+class c3po_tlm_slice_filter #(type T = c3po_data_tlm,
                               type F = uvm_tlm_analysis_fifo #(T)) extends uvm_subscriber #(T);
    F fifo;
    integer slice_id;
@@ -26,11 +26,11 @@ class c3po_scoreboard extends uvm_scoreboard;
 
    integer slice_id = 0;
 
-   uvm_analysis_export #(c3po_transaction) sb_export_in;
-   uvm_analysis_export #(c3po_transaction) sb_export_out;
+   uvm_analysis_export #(c3po_data_tlm) sb_export_in;
+   uvm_analysis_export #(c3po_data_tlm) sb_export_out;
 
-   uvm_tlm_analysis_fifo #(c3po_transaction) fifo_in;
-   uvm_tlm_analysis_fifo #(c3po_transaction) fifo_out;
+   uvm_tlm_analysis_fifo #(c3po_data_tlm) fifo_in;
+   uvm_tlm_analysis_fifo #(c3po_data_tlm) fifo_out;
    c3po_tlm_slice_filter slice_filter_in;
 
    function new(string name, uvm_component parent);
@@ -75,7 +75,7 @@ class c3po_scoreboard extends uvm_scoreboard;
    endfunction: pkt_compare
 
    task run();
-      c3po_transaction tlm_in, tlm_out;
+      c3po_data_tlm tlm_in, tlm_out;
       forever begin
          fifo_out.get(tlm_out);
          case(tlm_out.op)

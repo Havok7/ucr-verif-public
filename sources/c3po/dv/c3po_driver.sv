@@ -1,10 +1,10 @@
 class c3po_in_driver #(MAX_DIN_SIZE=160,
                        PORTS_P=4,
-                       NON_READY_CLKS_TIMEOUT=100) extends uvm_driver#(c3po_transaction);
+                       NON_READY_CLKS_TIMEOUT=100) extends uvm_driver#(c3po_data_tlm);
    `uvm_component_utils(c3po_in_driver)
 
    virtual c3po_in_if vif_in;
-   c3po_transaction tlm;
+   c3po_data_tlm tlm;
    semaphore pkt_sem;
 
    function new(string name, uvm_component parent);
@@ -70,7 +70,7 @@ class c3po_in_driver #(MAX_DIN_SIZE=160,
       return ready;
    endfunction: slices_ready
 
-   task drive_pkt(c3po_transaction tlm, uvm_phase phase);
+   task drive_pkt(c3po_data_tlm tlm, uvm_phase phase);
       integer pkt_offset = 0, send = 0, data_size = 0, remaining_bytes = 0;
       bit [MAX_DIN_SIZE*8-1:0] temp_data = 0;
       integer non_ready_clks = 0;
@@ -145,7 +145,7 @@ class c3po_in_driver #(MAX_DIN_SIZE=160,
       phase.drop_objection(.obj(this));
    endtask: drive_pkt
 
-   virtual task drive_reset_l(c3po_transaction tlm, uvm_phase phase);
+   virtual task drive_reset_l(c3po_data_tlm tlm, uvm_phase phase);
       phase.raise_objection(.obj(this));
 
       repeat(tlm.start) @(posedge vif_in.sig_clock);
@@ -156,7 +156,7 @@ class c3po_in_driver #(MAX_DIN_SIZE=160,
       phase.drop_objection(.obj(this));
    endtask: drive_reset_l
 
-   virtual task drive_val_l(c3po_transaction tlm, uvm_phase phase);
+   virtual task drive_val_l(c3po_data_tlm tlm, uvm_phase phase);
       phase.raise_objection(.obj(this));
 
       repeat(tlm.start) @(posedge vif_in.sig_clock);
@@ -170,11 +170,11 @@ class c3po_in_driver #(MAX_DIN_SIZE=160,
 endclass: c3po_in_driver
 
 class c3po_reg_driver #(ADDR_OFFSET_P=10,
-                        ADDR_SIZE_P=6) extends uvm_driver#(c3po_transaction);
+                        ADDR_SIZE_P=6) extends uvm_driver#(c3po_reg_tlm);
    `uvm_component_utils(c3po_reg_driver)
 
    virtual c3po_reg_if vif_reg;
-   c3po_transaction tlm;
+   c3po_reg_tlm tlm;
 
    function new(string name, uvm_component parent);
       super.new(name, parent);
@@ -233,7 +233,7 @@ class c3po_reg_driver #(ADDR_OFFSET_P=10,
       vif_reg.sig_write_val <= 0;
    endtask: write_reg
 
-   virtual task drive_cfg_port_id(c3po_transaction tlm, uvm_phase phase);
+   virtual task drive_cfg_port_id(c3po_reg_tlm tlm, uvm_phase phase);
       bit[31:0] reg_val = 0;
       bit[ADDR_SIZE_P-1:0] reg_addr = ADDR_OFFSET_P * tlm.id;
 
@@ -249,7 +249,7 @@ class c3po_reg_driver #(ADDR_OFFSET_P=10,
       phase.drop_objection(.obj(this));
    endtask: drive_cfg_port_id
 
-   virtual task drive_cfg_port_enable(c3po_transaction tlm, uvm_phase phase);
+   virtual task drive_cfg_port_enable(c3po_reg_tlm tlm, uvm_phase phase);
       bit[31:0] reg_val = 0;
       bit[ADDR_SIZE_P-1:0] reg_addr = ADDR_OFFSET_P * tlm.id;
 

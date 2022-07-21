@@ -1,5 +1,5 @@
 
-class c3po_pkt_sequence extends uvm_sequence#(c3po_transaction);
+class c3po_pkt_sequence extends uvm_sequence#(c3po_data_tlm);
    `uvm_object_utils(c3po_pkt_sequence)
 
    integer num_pkts = 10, pkt_size_l = 1, pkt_size_h = 1024;
@@ -13,8 +13,8 @@ class c3po_pkt_sequence extends uvm_sequence#(c3po_transaction);
 
    task body();
       integer num_pkts_i = 0;
-      c3po_transaction tlm;
-      tlm = c3po_transaction::type_id::create(.name("tlm"),
+      c3po_data_tlm tlm;
+      tlm = c3po_data_tlm::type_id::create(.name("tlm"),
                                               .contxt(get_full_name()));
       while (num_pkts_i < num_pkts) begin
          start_item(tlm);
@@ -40,7 +40,7 @@ class c3po_pkt_sequence extends uvm_sequence#(c3po_transaction);
    endtask: body
 endclass: c3po_pkt_sequence
 
-class c3po_cfg_port_sequence extends uvm_sequence#(c3po_transaction);
+class c3po_cfg_port_sequence extends uvm_sequence#(c3po_reg_tlm);
    `uvm_object_utils(c3po_cfg_port_sequence)
    integer num_cfgs = 10;
    integer max_start = 10;
@@ -53,9 +53,9 @@ class c3po_cfg_port_sequence extends uvm_sequence#(c3po_transaction);
 
    task body();
       integer num_pkts_i = 0;
-      c3po_transaction tlm;
-      tlm = c3po_transaction::type_id::create(.name("tlm"),
-                                              .contxt(get_full_name()));
+      c3po_reg_tlm tlm;
+      tlm = c3po_reg_tlm::type_id::create(.name("tlm"),
+                                                  .contxt(get_full_name()));
       repeat(num_cfgs) begin
          start_item(tlm);
          assert(tlm.randomize() with {
