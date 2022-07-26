@@ -29,7 +29,8 @@ class unpacker_monitor_in extends uvm_monitor;
          bins case_32_32_32 = (32=>32=>32);
          bins case_160_160_160 = (160=>160=>160);
          bins case_1a32_160_1a32 = ([1:32]=>160=>[1:32]);
-         bins case_160_33a63_160 = (160=>[33:63]=>160);
+         bins case_160_33a63 = (160=>[33:63]);
+         bins case_33a63_160 = ([33:63]=>160);
       }
 
       // 4. Check differents types of transaction ops
