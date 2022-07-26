@@ -161,7 +161,7 @@ class unpacker_pkt_all_simple_sequence extends unpacker_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100);
+      send_pkt_seq_size_range(1, 1024, 1000);
    endtask: body
 
 endclass: unpacker_pkt_all_simple_sequence
@@ -174,7 +174,7 @@ class unpacker_pkt_all_reset_sequence extends unpacker_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_reset_l(1));
+      send_pkt_seq_size_range(1, 1024, 1000, .do_reset_l(1));
    endtask: body
 
 endclass: unpacker_pkt_all_reset_sequence
@@ -187,7 +187,7 @@ class unpacker_pkt_all_val_sequence extends unpacker_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_val_l(1));
+      send_pkt_seq_size_range(1, 1024, 1000, .do_val_l(1));
    endtask: body
 
 endclass: unpacker_pkt_all_val_sequence

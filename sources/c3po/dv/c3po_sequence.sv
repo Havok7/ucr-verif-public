@@ -148,7 +148,7 @@ class c3po_pkt_all_simple_sequence extends c3po_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100);
+      send_pkt_seq_size_range(1, 1024, 1000);
    endtask: body
 
 endclass: c3po_pkt_all_simple_sequence
@@ -161,7 +161,7 @@ class c3po_pkt_all_val_sequence extends c3po_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_val_l(1));
+      send_pkt_seq_size_range(1, 1024, 1000, .do_val_l(1));
    endtask: body
 
 endclass: c3po_pkt_all_val_sequence
@@ -174,7 +174,7 @@ class c3po_pkt_all_reset_sequence extends c3po_base_test_sequence;
    endfunction: new
 
    task body();
-      send_pkt_seq_size_range(1, 1024, 100, .do_reset_l(1));
+      send_pkt_seq_size_range(1, 1024, 1000, .do_reset_l(1));
    endtask: body
 
 endclass: c3po_pkt_all_reset_sequence
@@ -208,7 +208,7 @@ class c3po_pkt_cfg_port_enable_sequence extends c3po_base_test_sequence;
    task body();
       fork
          send_cfg_port_enable_seq(100);
-         send_pkt_seq_size_range(1, 1024, 100);
+         send_pkt_seq_size_range(1, 1024, 1000);
       join
    endtask: body
 
@@ -224,7 +224,7 @@ class c3po_pkt_cfg_port_id_sequence extends c3po_base_test_sequence;
    task body();
       fork
          send_cfg_port_id_seq(100);
-         send_pkt_seq_size_range(1, 1024, 100);
+         send_pkt_seq_size_range(1, 1024, 1000);
       join
    endtask: body
 
