@@ -3,6 +3,8 @@ package unpacker_pkg;
    import uvm_pkg::*;
 `include "uvm_macros.svh"
 
+`include "unpacker_tlm.sv"
+`include "unpacker_sequence.sv"
 `include "unpacker_sequencer.sv"
 `include "unpacker_monitor.sv"
 `include "unpacker_driver.sv"
