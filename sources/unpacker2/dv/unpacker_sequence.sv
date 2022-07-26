@@ -208,6 +208,9 @@ class unpacker_pkt_corner_sizes_sequence extends unpacker_base_test_sequence;
       send_pkt_seq_size(160, 1);
       send_pkt_seq_size(161, 1);
       send_pkt_seq_size(1023, 1);
+      send_pkt_seq_size(160, 1);
+      send_pkt_seq_size(42, 1);
+      send_pkt_seq_size(160, 1);
    endtask: body
 
 endclass: unpacker_pkt_corner_sizes_sequence
