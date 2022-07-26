@@ -76,22 +76,6 @@ class c3po_pkt_all_reset_test extends c3po_base_test;
 
 endclass: c3po_pkt_all_reset_test
 
-// Test sending corner case sized packets to random slices
-class c3po_pkt_corner_sizes_test extends c3po_base_test;
-   `uvm_component_utils(c3po_pkt_corner_sizes_test)
-
-   function new(string name, uvm_component parent);
-      super.new(name, parent);
-   endfunction: new
-
-   function void build_phase(uvm_phase phase);
-      super.build_phase(phase);
-      set_type_override_by_type(c3po_base_test_sequence::get_type(),
-                                c3po_pkt_corner_sizes_sequence::get_type());
-   endfunction: build_phase
-
-endclass: c3po_pkt_corner_sizes_test
-
 // Test sending random sized packets to random slices
 // while randomly reconfiguring the port enable state
 // for random slices
